@@ -91,7 +91,6 @@ withGhcDebug main = do
 withGhcDebugUnix :: String -> IO a -> IO a
 withGhcDebugUnix socketPath main = do
     createDirectoryIfMissing True (takeDirectory socketPath)
-    hPutStrLn stderr $ "Starting ghc-debug on socket: " ++ socketPath
 
     -- Start a thread to handle requests
     _threadId <- forkIO $ withCString socketPath start_over_un_c
@@ -108,8 +107,6 @@ withGhcDebugUnix socketPath main = do
 -- > main = withGhcDebugTCP "127.0.0.1" 1235 $ do ...
 withGhcDebugTCP :: String -> Word16 -> IO a -> IO a
 withGhcDebugTCP host port main = do
-    hPutStrLn stderr $ "Starting ghc-debug on tcp: " ++ host ++ ":" ++ (show port)
-
     -- Start a thread to handle requests
     _threadId <- forkIO $ withCString host $ \host_c ->
       start_over_tcp_c host_c port
